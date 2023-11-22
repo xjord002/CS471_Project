@@ -1,36 +1,63 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <vector>
-#include <cmath>
 #include <queue>
 
 using namespace std;
 
-int main() {
-    ifstream fin("Datafile1.txt");
-    if(!fin) {
-        cerr << "Failed to open the text file." << endl;
-        return 1;
+struct Process {
+    int arrivalTime;
+    int burstLength;
+    int prio;
+    int waitTime;
+};
+
+void readFile(const string &fin, queue<Process> &processes) {
+    ifstream inputFile(fin);
+    if(!inputFile.is_open()) {
+        cerr << "File cannot be opened: " << fin << endl;
+
+        return;
     }
 
     string header;
-    getline(fin, header);
+    getline(inputFile, header);
 
-    int n = 513;
-    vector<int> arriveTime, burstLength, prio;
-    int a, b, p;
-    while(fin >> a >> b >> p) {
-        arriveTime.push_back(a);
-        burstLength.push_back(b);
-        prio.push_back(p);
+    Process process;
+    while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
+        process.waitTime = 0;
+        processes.push(process);
     }
 
-    for(size_t i = 0; i < n; i++) {
-        cout << "Arrival Time: " << setw(5) << arriveTime[i] << "  Burst Length: " << setw(3) << burstLength[i] << "  Priority: " << prio[i] << endl;
+    inputFile.close();
+}
+
+void FIFO(queue<Process> &processes) {
+    // cout << "Arrival Time " << " Burst Length " << " Wait Times" << endl;
+    int currentTime = 0;
+    int totalElapsedTime = 0;
+    int completedProcesses = 0;
+    while(!processes.empty()) {
+        Process process = processes.front();
+        processes.pop();
+
+        process.waitTime = max(0, currentTime - process.arrivalTime);
+        currentTime = max(currentTime, process.arrivalTime) + process.burstLength;
+        totalElapsedTime = max(totalElapsedTime, currentTime);
+        completedProcesses++;
+
+        cout << setw(10) << process.arrivalTime << setw(13) << process.burstLength
+             << setw(13) << process.waitTime << endl;
     }
 
-    fin.close();
+    cout << "Total elapsed time: " << totalElapsedTime / 1000 << " seconds." << endl;
+    cout << "Throughput: " << completedProcesses / totalElapsedTime << endl;
+}
+
+int main() {
+    queue<Process> processes;
+    readFile("Datafile1.txt", processes);
+    FIFO(processes);
 
     return 0;
 }
