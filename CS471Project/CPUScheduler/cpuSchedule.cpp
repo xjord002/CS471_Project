@@ -37,6 +37,10 @@ void FIFO(queue<Process> &processes) {
     int currentTime = 0;
     int totalElapsedTime = 0;
     int completedProcesses = 0;
+    int totalWaitTime = 0;
+    int turnAroundTime = 0;
+    int totalTurnAroundTime = 0;
+
     while(!processes.empty()) {
         Process process = processes.front();
         processes.pop();
@@ -45,13 +49,18 @@ void FIFO(queue<Process> &processes) {
         currentTime = max(currentTime, process.arrivalTime) + process.burstLength;
         totalElapsedTime = max(totalElapsedTime, currentTime);
         completedProcesses++;
+        totalWaitTime += process.waitTime;
+        turnAroundTime = process.burstLength + process.waitTime;
+        totalTurnAroundTime += turnAroundTime;
 
-        cout << setw(10) << process.arrivalTime << setw(13) << process.burstLength
-             << setw(13) << process.waitTime << endl;
+        // cout << setw(10) << process.arrivalTime << setw(13) << process.burstLength
+        //      << setw(13) << process.waitTime << endl;
     }
-
-    cout << "Total elapsed time: " << totalElapsedTime / 1000 << " seconds." << endl;
-    cout << "Throughput: " << completedProcesses / totalElapsedTime << endl;
+    // cout << "Completed processes: " << completedProcesses << endl;
+    // cout << "Total elapsed time: " << totalElapsedTime / 1000 << " seconds." << endl;
+    // cout << "Throughput: " << completedProcesses / (totalElapsedTime / 1000) << endl;
+    // cout << "Average wait time: " << totalWaitTime / completedProcesses << endl;
+    // cout << "Average turn around time: " << totalTurnAroundTime / completedProcesses << endl;
 }
 
 int main() {
