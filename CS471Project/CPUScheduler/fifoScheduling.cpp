@@ -40,6 +40,12 @@ void FIFO(queue<Process> &processes) {
     int totalWaitTime = 0;
     int turnAroundTime = 0;
     int totalTurnAroundTime = 0;
+    ofstream CompletedProcesses, TotalElapsedTime, Throughput, AverageWaitTime, AverageTurnAroundTime, AverageResponseTime;
+    CompletedProcesses.open("CompletedProcesses.txt");
+    TotalElapsedTime.open("TotalElapsedTime.txt");
+    Throughput.open("Throughput.txt");
+    AverageWaitTime.open("AverageWaitTime.txt");
+    AverageTurnAroundTime.open("AverageTurnAroundTime.txt");
 
     while(!processes.empty()) {
         Process process = processes.front();
@@ -56,11 +62,11 @@ void FIFO(queue<Process> &processes) {
         // cout << setw(10) << process.arrivalTime << setw(13) << process.burstLength
         //      << setw(13) << process.waitTime << endl;
     }
-    // cout << "Completed processes: " << completedProcesses << endl;
-    // cout << "Total elapsed time: " << totalElapsedTime / 1000 << " seconds." << endl;
-    // cout << "Throughput: " << completedProcesses / (totalElapsedTime / 1000) << endl;
-    // cout << "Average wait time: " << totalWaitTime / completedProcesses << endl;
-    // cout << "Average turn around time: " << totalTurnAroundTime / completedProcesses << endl;
+    CompletedProcesses << "Completed processes: " << completedProcesses;
+    TotalElapsedTime << "Total elapsed time: " << totalElapsedTime / 1000 << " seconds.";
+    Throughput << "Throughput: " << completedProcesses / (totalElapsedTime / 1000);
+    AverageWaitTime << "Average wait time: " << totalWaitTime / completedProcesses;
+    AverageTurnAroundTime << "Average turn around time: " << totalTurnAroundTime / completedProcesses;
 }
 
 int main() {
