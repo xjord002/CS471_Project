@@ -34,6 +34,7 @@ void readFile(const string &fin, vector<Process> &processes) {
     getline(inputFile, header);
 
     Process process;
+    int counter = 0;
     // While inputFile, the first column is arrival time, 
     // second column is burst length, and the last column is priority.
     while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
@@ -41,11 +42,22 @@ void readFile(const string &fin, vector<Process> &processes) {
         process.waitTime = 0;
         // Add data to the end of the queue as they are read in.
         processes.push_back(process);
+
+        counter++;
+
+        if(counter >= 500) {
+            break;
+        }
     }
 
     inputFile.close();
 }
 
+/*
+ * A function to compare arrial times of each process
+ * and returns true if arrial time a is less than (before)
+ * arriavl time b.
+*/
 bool compareArrivalTime(Process& a, Process& b) {
     return a.arrivalTime < b.arrivalTime;
 }
@@ -64,56 +76,46 @@ bool compareBurstLength(Process& a, Process& b) {
 */
 void SJF(vector<Process> &processes) {
     int n = processes.size();
-    int currentTime = 0;
+    int finishTime = 0;
     int totalElapsedTime = 0;
     int completedProcesses = 0;
     int totalWaitTime = 0;
     int turnAroundTime = 0;
     int totalTurnAroundTime = 0;
-    // Opening the output file for each solution
-    // ofstream CompletedProcesses, TotalElapsedTime, Throughput, AverageWaitTime, AverageTurnAroundTime, AverageResponseTime;
-    // CompletedProcesses.open("CompletedProcesses.txt");
-    // TotalElapsedTime.open("TotalElapsedTime.txt");
-    // Throughput.open("Throughput.txt");
-    // AverageWaitTime.open("AverageWaitTime.txt");
-    // AverageTurnAroundTime.open("AverageTurnAroundTime.txt");
+
+    // Opening the output file for the solutions
+    ofstream SJFSolution;
+    SJFSolution.open("Solutions.txt");
     sort(processes.begin(), processes.end(), compareArrivalTime);
 
-    cout << "Current Time" << setw(15) << "Burst Length" << endl;
+    cout << "Arrival Time" << setw(15) << "Burst Length" << setw(15) << "Current Time" << setw(20) << "Turn Around Time" << setw(20) << "Wait Time" << endl;
     for(Process& process : processes) {
-        sort(processes.begin(), processes.end(), compareBurstLength);
-        if(process.arrivalTime > currentTime) {
-            currentTime = process.arrivalTime;
+        if(process.arrivalTime > finishTime) {
+            finishTime = process.arrivalTime;
         }
-
-        //cout << "Process time: " << currentTime << " to " << currentTime + process.burstLength << endl;
-        currentTime += process.burstLength;
-
-        process.waitTime = max(0, currentTime - process.arrivalTime);
-        totalElapsedTime = max(totalElapsedTime, currentTime);
-        completedProcesses++;
-        cout << setw(10) << currentTime << setw(13) << process.burstLength << endl;
-
-        // Calculating the total wait time
-        totalWaitTime += process.waitTime;
-        // Calculating the turn around time
-        turnAroundTime = process.burstLength + process.waitTime;
-        // Calculating the total turn around time
+        finishTime += process.burstLength;
+        turnAroundTime = finishTime - process.arrivalTime;
         totalTurnAroundTime += turnAroundTime;
+        process.waitTime = turnAroundTime - process.burstLength;
+        totalWaitTime += process.waitTime;
+        totalElapsedTime = max(totalElapsedTime, finishTime);
+        cout << setw(8) << process.arrivalTime << setw(12) << process.burstLength << setw(17) << finishTime << setw(19) << turnAroundTime << setw(20) << process.waitTime << endl;
+        completedProcesses++;
     }
     
-    // Outputting each solution to its own text file
-    // CompletedProcesses << "Completed processes: " << completedProcesses;
-    // CompletedProcesses << "Completed processes: " << completedProcesses;
-    // TotalElapsedTime << "Total elapsed time: " << totalElapsedTime / 1000 << " seconds.";
-    // Throughput << "Throughput: " << completedProcesses / (totalElapsedTime / 1000);
-    // AverageWaitTime << "Average wait time: " << totalWaitTime / completedProcesses;
-    // AverageTurnAroundTime << "Average turn around time: " << totalTurnAroundTime / completedProcesses;
+    // Outputting each solution to the solution file
+    SJFSolution << "Completed processes: " << completedProcesses
+                << "\nTotal elapsed time: " << totalElapsedTime / 1000
+                << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
+                << "\nAverage wait time: " << totalWaitTime / completedProcesses
+                << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;
+    
+    SJFSolution.close();
 }
  
 int main() {
     vector<Process> processes;
-    readFile("../Datafile1.txt", processes);
+    readFile("..\\Datafile1.txt", processes);
     SJF(processes);
  
     return 0;

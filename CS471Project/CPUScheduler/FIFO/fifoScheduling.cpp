@@ -28,6 +28,7 @@ void readFile(const string &fin, queue<Process> &processes) {
     getline(inputFile, header);
 
     Process process;
+    int counter = 0;
     // While inputFile, the first column is arrival time, 
     // second column is burst length, and the last column is priority.
     while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
@@ -35,6 +36,12 @@ void readFile(const string &fin, queue<Process> &processes) {
         process.waitTime = 0;
         // Add data to the end of the queue as they are read in.
         processes.push(process);
+
+        counter++;
+
+        if(counter >= 500) {
+            break;
+        }
     }
 
     inputFile.close();
@@ -49,12 +56,8 @@ void FIFO(queue<Process> &processes) {
     int turnAroundTime = 0;
     int totalTurnAroundTime = 0;
     // Opening the output file for each solution
-    ofstream CompletedProcesses, TotalElapsedTime, Throughput, AverageWaitTime, AverageTurnAroundTime, AverageResponseTime;
-    CompletedProcesses.open("CompletedProcesses.txt");
-    TotalElapsedTime.open("TotalElapsedTime.txt");
-    Throughput.open("Throughput.txt");
-    AverageWaitTime.open("AverageWaitTime.txt");
-    AverageTurnAroundTime.open("AverageTurnAroundTime.txt");
+    ofstream FIFOSolution;
+    FIFOSolution.open("Solutions.txt");
 
     while(!processes.empty()) {
         // Point to the first element of the queue
@@ -79,17 +82,17 @@ void FIFO(queue<Process> &processes) {
         //      << setw(13) << process.waitTime << endl;
     }
     // Outputting each solution to its own text file
-    CompletedProcesses << "Completed processes: " << completedProcesses;
-    TotalElapsedTime << "Total elapsed time: " << totalElapsedTime / 1000 << " seconds.";
-    Throughput << "Throughput: " << completedProcesses / (totalElapsedTime / 1000);
-    AverageWaitTime << "Average wait time: " << totalWaitTime / completedProcesses;
-    AverageTurnAroundTime << "Average turn around time: " << totalTurnAroundTime / completedProcesses;
+    FIFOSolution << "Completed processes: " << completedProcesses
+                 << "\nTotal elapsed time: " << totalElapsedTime / 1000 << " seconds."
+                 << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
+                 << "\nAverage wait time: " << totalWaitTime / completedProcesses
+                 << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;
 }
 
 int main() {
     queue<Process> processes;
     // Calling the file reading function
-    readFile("../Datafile1.txt", processes);
+    readFile("..\\Datafile1.txt", processes);
     // Calling the First In First Out function
     FIFO(processes);
 
