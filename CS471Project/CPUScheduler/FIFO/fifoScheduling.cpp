@@ -7,10 +7,10 @@ using namespace std;
 
 // A struct with characteristics of a Process
 struct Process {
-    int arrivalTime;
-    int burstLength;
+    double arrivalTime;
+    double burstLength;
     int prio;
-    int waitTime;
+    double waitTime;
 };
 
 // Function to read in the Datafile1.txt file
@@ -33,7 +33,7 @@ void readFile(const string &fin, queue<Process> &processes) {
     // second column is burst length, and the last column is priority.
     while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
         // wait time is equal to 0
-        process.waitTime = 0;
+        process.waitTime = 0.0;
         // Add data to the end of the queue as they are read in.
         processes.push(process);
 
@@ -49,12 +49,12 @@ void readFile(const string &fin, queue<Process> &processes) {
 
 void FIFO(queue<Process> &processes) {
     // cout << "Arrival Time " << " Burst Length " << " Wait Times" << endl;
-    int currentTime = 0;
-    int totalElapsedTime = 0;
-    int completedProcesses = 0;
-    int totalWaitTime = 0;
-    int turnAroundTime = 0;
-    int totalTurnAroundTime = 0;
+    double currentTime = 0.0;
+    double totalElapsedTime = 0.0;
+    double completedProcesses = 0.0;
+    double totalWaitTime = 0.0;
+    double turnAroundTime = 0.0;
+    double totalTurnAroundTime = 0.0;
     // Opening the output file for each solution
     ofstream FIFOSolution;
     FIFOSolution.open("Solutions.txt");
@@ -66,7 +66,7 @@ void FIFO(queue<Process> &processes) {
         processes.pop();
 
         // Wait time for each process
-        process.waitTime = max(0, currentTime - process.arrivalTime);
+        process.waitTime = max(0.0, currentTime - process.arrivalTime);
         currentTime = max(currentTime, process.arrivalTime) + process.burstLength;
         totalElapsedTime = max(totalElapsedTime, currentTime);
         completedProcesses++;
@@ -83,7 +83,7 @@ void FIFO(queue<Process> &processes) {
     }
     // Outputting each solution to its own text file
     FIFOSolution << "Completed processes: " << completedProcesses
-                 << "\nTotal elapsed time: " << totalElapsedTime / 1000 << " seconds."
+                 << "\nTotal elapsed time: " << totalElapsedTime / 1000
                  << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
                  << "\nAverage wait time: " << totalWaitTime / completedProcesses
                  << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;

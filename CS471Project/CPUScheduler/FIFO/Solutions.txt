@@ -1,5 +1,5 @@
 Completed processes: 500
-Total elapsed time: 14 seconds.
-Throughput: 35
-Average wait time: 17
+Total elapsed time: 14.744
+Throughput: 33.9121
+Average wait time: 17.884
 Average turn around time: 39
