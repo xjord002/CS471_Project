@@ -92,7 +92,7 @@ void FIFO(queue<Process> &processes) {
 int main() {
     queue<Process> processes;
     // Calling the file reading function
-    readFile("..\\Datafile1.txt", processes);
+    readFile("Datafile1.txt", processes);
     // Calling the First In First Out function
     FIFO(processes);
 

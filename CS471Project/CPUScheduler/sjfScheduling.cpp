@@ -107,7 +107,7 @@ void SJF(vector<Process> &processes) {
  
 int main() {
     vector<Process> processes;
-    readFile("..\\Datafile1.txt", processes);
+    readFile("Datafile1.txt", processes);
     SJF(processes);
  
     return 0;

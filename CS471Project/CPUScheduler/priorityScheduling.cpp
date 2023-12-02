@@ -93,7 +93,7 @@ void PRIO(vector<Process> &processes) {
  
 int main() {
     vector<Process> processes;
-    readFile("..\\Datafile1.txt", processes);
+    readFile("Datafile1.txt", processes);
     PRIO(processes);
  
     return 0;

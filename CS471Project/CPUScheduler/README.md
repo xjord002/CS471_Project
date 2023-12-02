@@ -10,7 +10,8 @@ This program includes three scheduling algorithms which a user can choose from. 
 * Priority with preemption
 
 ## Input File
+Each algorithm takes a data file named "Datafile1.txt" containing a header and 513 processes with three columns. The columns represent Arrival Time, Burst Length, and Priority in that order. Only the first 500 processes are read and stored in a queue or a vector depending on the algorithm of choice.
+
+## Compiling The Program
 
 
-## Running The Program
-The program should be run using the terminal with the following command:
