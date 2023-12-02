@@ -16,6 +16,18 @@ struct Process {
     double waitTime;
 };
 
+/*
+ * A function to compare arrial times of each process
+ * and returns true if arrial time a is less than (before)
+ * arriavl time b.
+*/
+bool compareArrivalTime(Process& a, Process& b) {
+    if(a.arrivalTime == b.arrivalTime) {
+        return a.burstLength < b.burstLength;
+    }
+    return a.arrivalTime < b.arrivalTime;
+}
+
 /* 
  * Function to read in the Datafile1.txt file
 */
@@ -53,27 +65,6 @@ void readFile(const string &fin, vector<Process> &processes) {
 }
 
 /*
- * A function to compare arrial times of each process
- * and returns true if arrial time a is less than (before)
- * arriavl time b.
-*/
-bool compareArrivalTime(Process& a, Process& b) {
-    if(a.arrivalTime == b.arrivalTime) {
-        return a.burstLength < b.burstLength;
-    }
-    return a.arrivalTime < b.arrivalTime;
-}
-
-/*
- * A function to compare burst lengths of each process
- * and returns true if burst length a is less than
- * burst length b.
-*/
-bool compareBurstLength(Process& a, Process& b) {
-    return a.burstLength < b.burstLength;
-}
-
-/*
  * The function to handle shortest job first.
 */
 void SJF(vector<Process> &processes) {
@@ -82,7 +73,6 @@ void SJF(vector<Process> &processes) {
     double totalElapsedTime = 0.0;
     double completedProcesses = 0.0;
     double totalWaitTime = 0.0;
-    double turnAroundTime = 0.0;
     double totalTurnAroundTime = 0.0;
 
     // Opening the output file for the solutions
@@ -95,11 +85,11 @@ void SJF(vector<Process> &processes) {
         if(process.arrivalTime > finishTime) {
             finishTime = process.arrivalTime;
         }
-        turnAroundTime = finishTime + process.burstLength - process.arrivalTime;
-        totalTurnAroundTime += turnAroundTime;
-        process.waitTime = turnAroundTime - process.burstLength;
+        process.waitTime = max(0.0, finishTime - process.arrivalTime);
         totalWaitTime += process.waitTime;
         finishTime += process.burstLength;
+        double turnAroundTime = finishTime - process.arrivalTime;
+        totalTurnAroundTime += turnAroundTime;
         totalElapsedTime = max(totalElapsedTime, finishTime);
         cout << setw(8) << process.arrivalTime << setw(12) << process.burstLength << setw(17) << finishTime << setw(19) << turnAroundTime << setw(20) << process.waitTime << endl;
         completedProcesses++;
