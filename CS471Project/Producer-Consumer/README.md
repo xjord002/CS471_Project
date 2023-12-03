@@ -15,3 +15,18 @@ Each file has a column with sleep times matching the #sec in their names.
 
 ## Compiling The Program
 **Before compiling, be sure to be in the Producer-Consumer directory**<br>
+The program can be compiled with the following command in the terminal:<br>
+```g++ -std=c++11 -o program main.cpp```
+
+## Running The Program
+**Before running, be sure to be in the Producer-Consumer directory**<br>
+To run the program, use the following command in the terminal:<br>
+```./program [input file]```
+
+## Output
+There will be an output file to match the input file that was used to run the program:<br>
+*For input-2sec-wait.txt it will be output-2sec-wait.txt
+*For input-4sec-wait.txt it will be output-4sec-wait.txt
+*For input-6sec-wait.txt it will be output-6sec-wait.txt
+
+## Results, Summary, and Explanation
