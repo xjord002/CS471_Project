@@ -28,11 +28,12 @@ void readFile(const string &fin, queue<fifoProcess> &fifoProcesses) {
     while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
         // wait time is equal to 0
         process.waitTime = 0.0;
+        process.responseTime = -1;
         // Add data to the end of the queue as they are read in.
         fifoProcesses.push(process);
-
+        // update the counter
         counter++;
-
+        // if the counter is equal to 500, stop
         if(counter >= 500) {
             break;
         }
@@ -41,8 +42,10 @@ void readFile(const string &fin, queue<fifoProcess> &fifoProcesses) {
     inputFile.close();
 }
 
+/*
+ * Function for handling first in first out scheduling
+*/
 void FIFO(queue<fifoProcess> &fifoProcesses) {
-    // cout << "Arrival Time " << " Burst Length " << " Wait Times" << endl;
     double currentTime = 0.0;
     double totalElapsedTime = 0.0;
     double completedProcesses = 0.0;
@@ -50,7 +53,8 @@ void FIFO(queue<fifoProcess> &fifoProcesses) {
     double turnAroundTime = 0.0;
     double totalTurnAroundTime = 0.0;
     double totalBurstTime = 0.0;
-    // Opening the output file for each solution
+    double totalResponseTime = 0.0;
+    // Opening the output file for the solutions
     ofstream FIFOSolution;
     FIFOSolution.open("Output-FIFOScheduling.txt");
 
@@ -63,8 +67,13 @@ void FIFO(queue<fifoProcess> &fifoProcesses) {
         // Wait time for each process
         process.waitTime = max(0.0, currentTime - process.arrivalTime);
         currentTime = max(currentTime, process.arrivalTime) + process.burstLength;
-        totalElapsedTime = max(totalElapsedTime, currentTime);
+        if(process.arrivalTime > totalElapsedTime) {
+            totalElapsedTime = process.arrivalTime;
+        }
+        // totalElapsedTime = max(totalElapsedTime, currentTime);
         completedProcesses++;
+
+        totalElapsedTime += process.burstLength;
 
         // Calculating the total wait time
         totalWaitTime += process.waitTime;
@@ -72,20 +81,21 @@ void FIFO(queue<fifoProcess> &fifoProcesses) {
         turnAroundTime = process.burstLength + process.waitTime;
         // Calculating the total turn around time
         totalTurnAroundTime += turnAroundTime;
-
+        // Calculating the total burst length
         totalBurstTime += process.burstLength;
 
-        // cout << setw(10) << process.arrivalTime << setw(13) << process.burstLength
-        //      << setw(13) << process.waitTime << endl;
+        process.responseTime = totalElapsedTime;
+
+        totalResponseTime += process.responseTime;
     }
-    // Outputting each solution to its own text file
+    // Outputting all the solutions into the output file
     FIFOSolution << "Completed processes: " << completedProcesses
                  << "\nTotal elapsed time: " << totalElapsedTime / 1000
                  << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
                  << "\nCPU Utilization: " << totalBurstTime / currentTime
                  << "\nAverage wait time: " << totalWaitTime / completedProcesses
                  << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses
-                 << "\nAverage response time: " << endl;
+                 << "\nAverage response time: " << (totalResponseTime / 1000) / completedProcesses << endl;
     
     FIFOSolution.close();
 }

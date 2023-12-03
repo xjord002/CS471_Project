@@ -42,11 +42,13 @@ void readFile(const string &fin, vector<sjfProcess> &sjfProcesses) {
     // second column is burst length, and the last column is priority.
     while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
         process.waitTime = 0.0;
+        process.responseTime = -1;
+        process.remainingBurstLength = process.burstLength;
         // Add data to the end of the queue as they are read in.
         sjfProcesses.push_back(process);
-
+        // update the counter
         counter++;
-
+        // if the counter is equal to 500, stop
         if(counter >= 500) {
             break;
         }
@@ -60,42 +62,51 @@ void readFile(const string &fin, vector<sjfProcess> &sjfProcesses) {
 */
 void SJF(vector<sjfProcess> &sjfProcesses) {
     int n = sjfProcesses.size();
-    double finishTime = 0.0;
     double totalElapsedTime = 0.0;
     double completedProcesses = 0.0;
     double totalWaitTime = 0.0;
+    double turnAroundTime = 0.0;
     double totalTurnAroundTime = 0.0;
     double totalBurstTime = 0.0;
+    double totalResponseTime = 0.0;
+    int index = 0;
 
     // Opening the output file for the solutions
     ofstream SJFSolution;
     SJFSolution.open("Output-SJFScheduling.txt");
     sort(sjfProcesses.begin(), sjfProcesses.end(), compareArrivalTime);
 
-    // cout << "Arrival Time" << setw(15) << "Burst Length" << setw(15) << "Finish Time" << setw(20) << "Turn Around Time" << setw(20) << "Wait Time" << endl;
-    for(sjfProcess& process : sjfProcesses) {
-        if(process.arrivalTime > finishTime) {
-            finishTime = process.arrivalTime;
+    for(int i = 0; i < n; i++) {
+        if(i > 0 && sjfProcesses[i].arrivalTime == sjfProcesses[i - 1].arrivalTime && sjfProcesses[i].burstLength < sjfProcesses[i - 1].burstLength) {
+            swap(sjfProcesses[i], sjfProcesses[i - 1]);
         }
-        process.waitTime = max(0.0, finishTime - process.arrivalTime);
-        totalWaitTime += process.waitTime;
-        finishTime += process.burstLength;
-        double turnAroundTime = finishTime - process.arrivalTime;
+
+        if(sjfProcesses[i].arrivalTime > totalElapsedTime) {
+            totalElapsedTime = sjfProcesses[i].arrivalTime;
+        }
+        if(sjfProcesses[i].responseTime == -1.0) {
+            sjfProcesses[i].responseTime = totalElapsedTime;
+        }
+
+        sjfProcesses[i].waitTime = max(0.0, totalElapsedTime - sjfProcesses[i].arrivalTime);
+        totalWaitTime += sjfProcesses[i].waitTime;
+        totalElapsedTime += sjfProcesses[i].burstLength;
+        turnAroundTime = totalElapsedTime - sjfProcesses[i].arrivalTime;
         totalTurnAroundTime += turnAroundTime;
-        totalElapsedTime = max(totalElapsedTime, finishTime);
-        totalBurstTime += process.burstLength;
-        // cout << setw(8) << process.arrivalTime << setw(12) << process.burstLength << setw(17) << finishTime << setw(19) << turnAroundTime << setw(20) << process.waitTime << endl;
+        totalBurstTime += sjfProcesses[i].burstLength;
+
+        totalResponseTime += sjfProcesses[i].responseTime;
         completedProcesses++;
     }
-    
-    // Outputting each solution to the solution file
+
+    // Outputting all the solutions into the output file
     SJFSolution << "Completed processes: " << completedProcesses
                 << "\nTotal elapsed time: " << totalElapsedTime / 1000
                 << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
-                << "\nCPU Utilization: " << totalBurstTime / finishTime
+                << "\nCPU Utilization: " << totalBurstTime / totalElapsedTime
                 << "\nAverage wait time: " << totalWaitTime / completedProcesses
                 << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses
-                << "\nAverage response time: " << endl;
+                << "\nAverage response time: " << (totalResponseTime / 1000) / completedProcesses << endl;
     
     SJFSolution.close();
 }

@@ -4,7 +4,7 @@
 Xavier Jordan
 
 ## Description
-This program includes three scheduling algorithms which a user can choose from. They will act as a CPU scheduler that can handle 500 simulated processes. The following are the scheduling algorithms:
+This program includes three scheduling algorithms written in C++ which a user can choose from. They will act as a CPU scheduler that can handle 500 simulated processes. The following are the scheduling algorithms:
 * First In First Out (FIFO)
 * Shortes Job First without preemption (SJF)
 * Priority with preemption
@@ -29,3 +29,6 @@ There will be an output file for each program after running them.
 * For Priority: Output-PriorityScheduling.txt
 
 ## Results, Summary, and Explanation
+You can see in each output file the results of the algorithms. The completed processes, total elapsed time, throughput, and the CPU utilization were mostly the same for all. 
+The SJF algorithm had the lowest average wait time, average turn around time, and the average response time out of the three algorithms.
+The SJF algorithm chooses processes with the lowest burst lengths to execute, therefore making the rest of the processes wait less.

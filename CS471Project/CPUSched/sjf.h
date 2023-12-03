@@ -9,6 +9,8 @@ struct sjfProcess {
     double burstLength;
     int prio;
     double waitTime;
+    double responseTime;
+    double remainingBurstLength;
 };
 
 void readFile(const std::string &fin, std::vector<sjfProcess> &sjfProcesses);

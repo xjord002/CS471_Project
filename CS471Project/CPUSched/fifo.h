@@ -9,6 +9,7 @@ struct fifoProcess {
     double burstLength;
     int prio;
     double waitTime;
+    double responseTime;
 };
 
 void readFile(const std::string &fin, std::queue<fifoProcess> &fifoProcesses);

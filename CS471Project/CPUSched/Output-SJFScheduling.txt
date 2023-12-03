@@ -1,0 +1,7 @@
+Completed processes: 500
+Total elapsed time: 14.744
+Throughput: 33.9121
+CPU Utilization: 0.716088
+Average wait time: 17.83
+Average turn around time: 38.946
+Average response time: 7.46546

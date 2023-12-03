@@ -29,12 +29,12 @@ void readFile(const string &fin, vector<prioProcess> &prioProcesses) {
     while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
         // wait time is equal to 0
         process.waitTime = 0.0;
-        process.responseTime = 0.0;
+        process.responseTime = -1.0;
         // Add data to the end of the queue as they are read in.
         prioProcesses.push_back(process);
-
+        // update the counter
         counter++;
-
+        // if the counter is equal to 500, stop
         if(counter >= 500) {
             break;
         }
@@ -42,56 +42,62 @@ void readFile(const string &fin, vector<prioProcess> &prioProcesses) {
     inputFile.close();
 }
 
+/*
+ * Function to compare priorities and arrival times
+*/
 bool comparePrio(prioProcess& a, prioProcess& b) {
+    // if the arrival time of the current process is equal to the previous, return the one with the higher priority
     if(a.arrivalTime == b.arrivalTime) {
         return a.prio < b.prio;
     }
+    // otherwise return the arrival time that comes before
     return a.arrivalTime < b.arrivalTime;
 }
 
+/*
+ * Function to handle priority scheduling with preemption
+*/
 void PRIO(vector<prioProcess> &prioProcesses) {
     int n = prioProcesses.size();
-    double finishTime = 0.0;
+    double totalElapsedTime = 0.0;
     double completedProcesses = 0.0;
     double totalWaitTime = 0.0;
     double turnAroundTime = 0.0;
     double totalTurnAroundTime = 0.0;
     double totalBurstTime = 0.0;
     double totalResponseTime = 0.0;
+    // Output file to store the solutions
     ofstream PrioSolution;
     PrioSolution.open("Output-PriorityScheduling.txt");
+    // sorting the vector with the previous comparing function
     sort(prioProcesses.begin(), prioProcesses.end(), comparePrio);
 
-    // cout << "Arrival Time" << setw(16) << "Burst Length" << setw(15) << "Priority"
-    //      << setw(17) << "Finish Time" << setw(20) << "Turn Around Time" << setw(13) 
-    //      << "Wait Time" << endl;
-
     for(prioProcess& process : prioProcesses) {
-        if(process.arrivalTime > finishTime) {
-            finishTime = process.arrivalTime;
+        if(process.arrivalTime > totalElapsedTime) {
+            totalElapsedTime = process.arrivalTime;
         }
-        if(process.responseTime == 0) {
-            process.responseTime = process.waitTime - process.arrivalTime;
+        if(process.responseTime == -1.0) {
+            process.responseTime = totalElapsedTime;
         }
 
-        process.waitTime = finishTime - process.arrivalTime;
-        finishTime += process.burstLength;
-        turnAroundTime = finishTime - process.arrivalTime;
+        process.waitTime = totalElapsedTime - process.arrivalTime;
         totalWaitTime += process.waitTime;
+        totalElapsedTime += process.burstLength;
+        turnAroundTime = totalElapsedTime - process.arrivalTime;
         totalTurnAroundTime += turnAroundTime;
         totalBurstTime += process.burstLength;
+        totalResponseTime += process.responseTime;
         completedProcesses++;
-        // cout << setw(5) << process.arrivalTime << setw(17) << process.burstLength << setw(17) 
-        //         << process.prio << setw(17) << finishTime << setw(17) << turnAroundTime
-        //         << setw(16) << process.waitTime << setw(17) << process.responseTime << endl;
     }
-    PrioSolution << "Completed Processes: " << completedProcesses
-                 << "\nTotal elapsed time: " << finishTime / 1000
-                 << "\nThroughput: " << completedProcesses / (finishTime / 1000)
-                 << "\nCPU Utilization: " << totalBurstTime / finishTime
+
+    // Outputting all the solutions into the output file
+    PrioSolution << "Completed processes: " << completedProcesses
+                 << "\nTotal elapsed time: " << totalElapsedTime / 1000
+                 << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
+                 << "\nCPU Utilization: " << totalBurstTime / totalElapsedTime
                  << "\nAverage wait time: " << totalWaitTime / completedProcesses
-                 << "\nAverage Turn Around Time: " << totalTurnAroundTime / completedProcesses
-                 << "\nAverage Response Time: " << endl;    
+                 << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses
+                 << "\nAverage response time: " << (totalResponseTime / 1000) / completedProcesses << endl;    
 
     PrioSolution.close();
 }
