@@ -81,4 +81,6 @@ void FIFO(queue<fifoProcess> &fifoProcesses) {
                  << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
                  << "\nAverage wait time: " << totalWaitTime / completedProcesses
                  << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;
+    
+    FIFOSolution.close();
 }

@@ -14,6 +14,8 @@ int main() {
     vector<sjfProcess> sjfProcesses;
     vector<prioProcess> prioProcesses;
     readFile("Datafile1.txt", fifoProcesses);
+    readFile("Datafile1.txt", prioProcesses);
+    readFile("Datafile1.txt", sjfProcesses);
     FIFO(fifoProcesses);
     SJF(sjfProcesses);
     PRIO(prioProcesses);

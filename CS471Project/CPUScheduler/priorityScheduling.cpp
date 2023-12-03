@@ -42,15 +42,15 @@ void readFile(const string &fin, vector<prioProcess> &prioProcesses) {
     inputFile.close();
 }
 
-struct ComparePrio {
-    bool operator()(prioProcess& a, prioProcess& b) {
-
-        return a.prio > b.prio;
+bool comparePrio(prioProcess& a, prioProcess& b) {
+    if(a.arrivalTime == b.arrivalTime) {
+        return a.prio < b.prio;
     }
-};
+    return a.arrivalTime < b.arrivalTime;
+}
 
-void PRIO(vector<prioProcess> &processes) {
-    int n = processes.size();
+void PRIO(vector<prioProcess> &prioProcesses) {
+    int n = prioProcesses.size();
     double finishTime = 0.0;
     double completedProcesses = 0.0;
     double totalWaitTime = 0.0;
@@ -60,13 +60,13 @@ void PRIO(vector<prioProcess> &processes) {
     double totalResponseTime = 0.0;
     ofstream PrioSolution;
     PrioSolution.open("Output-PriorityScheduling.txt");
-    priority_queue<prioProcess, vector<prioProcess>, ComparePrio> readyQueue;
+    sort(prioProcesses.begin(), prioProcesses.end(), comparePrio);
 
     cout << "Arrival Time" << setw(16) << "Burst Length" << setw(15) << "Priority"
          << setw(17) << "Finish Time" << setw(20) << "Turn Around Time" << setw(13) 
          << "Wait Time" << endl;
 
-    for(prioProcess& process : processes) {
+    for(prioProcess& process : prioProcesses) {
         if(process.arrivalTime > finishTime) {
             finishTime = process.arrivalTime;
         }
