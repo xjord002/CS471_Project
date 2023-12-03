@@ -14,12 +14,12 @@ Each algorithm takes a data file named "Datafile1.txt" containing a header and 5
 
 ## Compiling The Program
 **Before compiling, be sure to be in the CPUScheduler directory**<br>
-The program can be compiled in the terminal using the following command:
+The program can be compiled in the terminal using the following command:<br>
 ```g++ -std=c++11 -o program main.cpp fifoScheduling.cpp sjfScheduling.cpp priorityScheduling.cpp```
 
 ## Running The Program
 **Before running, be sure to be in the CPUScheduler directory**<br>
-To run the program, use the following command in the terminal:
+To run the program, use the following command in the terminal:<br>
 ```./program```
 
 ## Output
