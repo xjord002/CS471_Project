@@ -14,4 +14,4 @@ The program will take three seperate files containing 12 producers and 12 consum
 Each file has a column with sleep times matching the #sec in their names.
 
 ## Compiling The Program
-**
+**Before compiling, be sure to be in the Producer-Consumer directory**<br>

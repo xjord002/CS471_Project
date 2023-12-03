@@ -13,12 +13,12 @@ This program includes three scheduling algorithms written in C++ which a user ca
 Each algorithm takes a data file named "Datafile1.txt" containing a header and 513 processes with three columns. The columns represent Arrival Time, Burst Length, and Priority in that order. Only the first 500 processes are read and stored in a queue or a vector depending on the algorithm of choice.
 
 ## Compiling The Program
-**Before compiling, be sure to be in the CPUScheduler directory**<br>
+**Before compiling, be sure to be in the CPUSched directory**<br>
 The program can be compiled in the terminal using the following command:<br>
 ```g++ -std=c++11 -o program main.cpp fifoScheduling.cpp sjfScheduling.cpp priorityScheduling.cpp```
 
 ## Running The Program
-**Before running, be sure to be in the CPUScheduler directory**<br>
+**Before running, be sure to be in the CPUSched directory**<br>
 To run the program, use the following command in the terminal:<br>
 ```./program```
 
