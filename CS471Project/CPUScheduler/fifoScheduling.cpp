@@ -49,6 +49,7 @@ void FIFO(queue<fifoProcess> &fifoProcesses) {
     double totalWaitTime = 0.0;
     double turnAroundTime = 0.0;
     double totalTurnAroundTime = 0.0;
+    double totalBurstTime = 0.0;
     // Opening the output file for each solution
     ofstream FIFOSolution;
     FIFOSolution.open("Output-FIFOScheduling.txt");
@@ -72,6 +73,8 @@ void FIFO(queue<fifoProcess> &fifoProcesses) {
         // Calculating the total turn around time
         totalTurnAroundTime += turnAroundTime;
 
+        totalBurstTime += process.burstLength;
+
         // cout << setw(10) << process.arrivalTime << setw(13) << process.burstLength
         //      << setw(13) << process.waitTime << endl;
     }
@@ -79,8 +82,10 @@ void FIFO(queue<fifoProcess> &fifoProcesses) {
     FIFOSolution << "Completed processes: " << completedProcesses
                  << "\nTotal elapsed time: " << totalElapsedTime / 1000
                  << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
+                 << "\nCPU Utilization: " << totalBurstTime / currentTime
                  << "\nAverage wait time: " << totalWaitTime / completedProcesses
-                 << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;
+                 << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses
+                 << "\nAverage response time: " << endl;
     
     FIFOSolution.close();
 }

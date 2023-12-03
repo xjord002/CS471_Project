@@ -65,6 +65,7 @@ void SJF(vector<sjfProcess> &sjfProcesses) {
     double completedProcesses = 0.0;
     double totalWaitTime = 0.0;
     double totalTurnAroundTime = 0.0;
+    double totalBurstTime = 0.0;
 
     // Opening the output file for the solutions
     ofstream SJFSolution;
@@ -82,6 +83,7 @@ void SJF(vector<sjfProcess> &sjfProcesses) {
         double turnAroundTime = finishTime - process.arrivalTime;
         totalTurnAroundTime += turnAroundTime;
         totalElapsedTime = max(totalElapsedTime, finishTime);
+        totalBurstTime += process.burstLength;
         // cout << setw(8) << process.arrivalTime << setw(12) << process.burstLength << setw(17) << finishTime << setw(19) << turnAroundTime << setw(20) << process.waitTime << endl;
         completedProcesses++;
     }
@@ -90,8 +92,10 @@ void SJF(vector<sjfProcess> &sjfProcesses) {
     SJFSolution << "Completed processes: " << completedProcesses
                 << "\nTotal elapsed time: " << totalElapsedTime / 1000
                 << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
+                << "\nCPU Utilization: " << totalBurstTime / finishTime
                 << "\nAverage wait time: " << totalWaitTime / completedProcesses
-                << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;
+                << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses
+                << "\nAverage response time: " << endl;
     
     SJFSolution.close();
 }
