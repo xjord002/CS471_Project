@@ -1,3 +1,4 @@
+#include "sjf.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -7,21 +8,11 @@
 using namespace std;
 
 /*
- * A struct with characteristics of a Process
-*/
-struct Process {
-    double arrivalTime;
-    double burstLength;
-    int prio;
-    double waitTime;
-};
-
-/*
  * A function to compare arrial times of each process
  * and returns true if arrial time a is less than (before)
  * arriavl time b.
 */
-bool compareArrivalTime(Process& a, Process& b) {
+bool compareArrivalTime(sjfProcess& a, sjfProcess& b) {
     if(a.arrivalTime == b.arrivalTime) {
         return a.burstLength < b.burstLength;
     }
@@ -31,7 +22,7 @@ bool compareArrivalTime(Process& a, Process& b) {
 /* 
  * Function to read in the Datafile1.txt file
 */
-void readFile(const string &fin, vector<Process> &processes) {
+void readFile(const string &fin, vector<sjfProcess> &sjfProcesses) {
     ifstream inputFile(fin);
     // If statement for error in opening the file.
     if(!inputFile.is_open()) {
@@ -45,14 +36,14 @@ void readFile(const string &fin, vector<Process> &processes) {
     string header;
     getline(inputFile, header);
 
-    Process process;
+    sjfProcess process;
     int counter = 0;
     // While inputFile, the first column is arrival time, 
     // second column is burst length, and the last column is priority.
     while(inputFile >> process.arrivalTime >> process.burstLength >> process.prio) {
         process.waitTime = 0.0;
         // Add data to the end of the queue as they are read in.
-        processes.push_back(process);
+        sjfProcesses.push_back(process);
 
         counter++;
 
@@ -67,8 +58,8 @@ void readFile(const string &fin, vector<Process> &processes) {
 /*
  * The function to handle shortest job first.
 */
-void SJF(vector<Process> &processes) {
-    int n = processes.size();
+void SJF(vector<sjfProcess> &sjfProcesses) {
+    int n = sjfProcesses.size();
     double finishTime = 0.0;
     double totalElapsedTime = 0.0;
     double completedProcesses = 0.0;
@@ -77,11 +68,11 @@ void SJF(vector<Process> &processes) {
 
     // Opening the output file for the solutions
     ofstream SJFSolution;
-    SJFSolution.open("Solutions.txt");
-    sort(processes.begin(), processes.end(), compareArrivalTime);
+    SJFSolution.open("Output-SJFScheduling.txt");
+    sort(sjfProcesses.begin(), sjfProcesses.end(), compareArrivalTime);
 
-    cout << "Arrival Time" << setw(15) << "Burst Length" << setw(15) << "Finish Time" << setw(20) << "Turn Around Time" << setw(20) << "Wait Time" << endl;
-    for(Process& process : processes) {
+    // cout << "Arrival Time" << setw(15) << "Burst Length" << setw(15) << "Finish Time" << setw(20) << "Turn Around Time" << setw(20) << "Wait Time" << endl;
+    for(sjfProcess& process : sjfProcesses) {
         if(process.arrivalTime > finishTime) {
             finishTime = process.arrivalTime;
         }
@@ -91,7 +82,7 @@ void SJF(vector<Process> &processes) {
         double turnAroundTime = finishTime - process.arrivalTime;
         totalTurnAroundTime += turnAroundTime;
         totalElapsedTime = max(totalElapsedTime, finishTime);
-        cout << setw(8) << process.arrivalTime << setw(12) << process.burstLength << setw(17) << finishTime << setw(19) << turnAroundTime << setw(20) << process.waitTime << endl;
+        // cout << setw(8) << process.arrivalTime << setw(12) << process.burstLength << setw(17) << finishTime << setw(19) << turnAroundTime << setw(20) << process.waitTime << endl;
         completedProcesses++;
     }
     
@@ -103,12 +94,4 @@ void SJF(vector<Process> &processes) {
                 << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;
     
     SJFSolution.close();
-}
- 
-int main() {
-    vector<Process> processes;
-    readFile("Datafile1.txt", processes);
-    SJF(processes);
- 
-    return 0;
 }

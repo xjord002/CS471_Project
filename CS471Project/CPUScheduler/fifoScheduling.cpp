@@ -1,20 +1,14 @@
+#include "fifo.h" 
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <string>
 #include <queue>
 
 using namespace std;
 
-// A struct with characteristics of a Process
-struct Process {
-    double arrivalTime;
-    double burstLength;
-    int prio;
-    double waitTime;
-};
-
 // Function to read in the Datafile1.txt file
-void readFile(const string &fin, queue<Process> &processes) {
+void readFile(const string &fin, queue<fifoProcess> &fifoProcesses) {
     ifstream inputFile(fin);
     // If statement for error in opening the file.
     if(!inputFile.is_open()) {
@@ -27,7 +21,7 @@ void readFile(const string &fin, queue<Process> &processes) {
     string header;
     getline(inputFile, header);
 
-    Process process;
+    fifoProcess process;
     int counter = 0;
     // While inputFile, the first column is arrival time, 
     // second column is burst length, and the last column is priority.
@@ -35,7 +29,7 @@ void readFile(const string &fin, queue<Process> &processes) {
         // wait time is equal to 0
         process.waitTime = 0.0;
         // Add data to the end of the queue as they are read in.
-        processes.push(process);
+        fifoProcesses.push(process);
 
         counter++;
 
@@ -47,7 +41,7 @@ void readFile(const string &fin, queue<Process> &processes) {
     inputFile.close();
 }
 
-void FIFO(queue<Process> &processes) {
+void FIFO(queue<fifoProcess> &fifoProcesses) {
     // cout << "Arrival Time " << " Burst Length " << " Wait Times" << endl;
     double currentTime = 0.0;
     double totalElapsedTime = 0.0;
@@ -57,13 +51,13 @@ void FIFO(queue<Process> &processes) {
     double totalTurnAroundTime = 0.0;
     // Opening the output file for each solution
     ofstream FIFOSolution;
-    FIFOSolution.open("Solutions.txt");
+    FIFOSolution.open("Output-FIFOScheduling.txt");
 
-    while(!processes.empty()) {
+    while(!fifoProcesses.empty()) {
         // Point to the first element of the queue
-        Process process = processes.front();
+        fifoProcess process = fifoProcesses.front();
         // Remove the element
-        processes.pop();
+        fifoProcesses.pop();
 
         // Wait time for each process
         process.waitTime = max(0.0, currentTime - process.arrivalTime);
@@ -87,14 +81,4 @@ void FIFO(queue<Process> &processes) {
                  << "\nThroughput: " << completedProcesses / (totalElapsedTime / 1000)
                  << "\nAverage wait time: " << totalWaitTime / completedProcesses
                  << "\nAverage turn around time: " << totalTurnAroundTime / completedProcesses;
-}
-
-int main() {
-    queue<Process> processes;
-    // Calling the file reading function
-    readFile("Datafile1.txt", processes);
-    // Calling the First In First Out function
-    FIFO(processes);
-
-    return 0;
 }
